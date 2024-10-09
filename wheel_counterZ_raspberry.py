@@ -124,13 +124,22 @@ def write_to_file(filename, message):
     except Exception as e:
         log_error(f"Error writing to {filename}: {e}")
 
-def update_github_file(filename, message):
-    write_to_file(filename, message)
+
+def update_github_file(filename):
     try:
+        # Read the content of the file
+        with open(filename, 'r') as file:
+            file_content = file.read()
+
+        # Initialize GitHub repository
         g = github.Github(github_token)
         repo = g.get_repo(github_repo)
+
+        # Get the file contents from the repository
         contents = repo.get_contents(filename)
-        repo.update_file(contents.path, f"Updated {filename}", message, contents.sha)
+
+        # Update the file on GitHub
+        repo.update_file(contents.path, f"Updated {filename}", file_content, contents.sha)
         print(f"Updated GitHub file {filename}")
     except Exception as e:
         log_error(f"Error updating GitHub file {filename}: {e}")
