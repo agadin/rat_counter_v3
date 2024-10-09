@@ -120,6 +120,7 @@ def update_github_file(filename, message):
         repo = g.get_repo(github_repo)
         contents = repo.get_contents(filename)
         repo.update_file(contents.path, f"Updated {filename}", message, contents.sha)
+        print(f"Updated GitHub file {filename}")
     except Exception as e:
         log_error(f"Error updating GitHub file {filename}: {e}")
 
@@ -157,7 +158,7 @@ print("Sensors are set up. Waiting for events...")
 
 # Initialize the last push time
 last_push_time = time.monotonic()
-time_between_pushes_minutes = preferences.get('time_between_pushes_minutes', 10)  # Default to 10 minutes
+time_between_pushes_minutes = preferences.get('time_between_pushes_minutes', 60)
 
 def reload_preferences(signum, frame):
     global preferences, sensor_names, time_between_pushes_minutes
