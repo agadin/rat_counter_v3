@@ -42,6 +42,7 @@ def read_preferences():
         g = github.Github(github_token)
         repo = g.get_repo(github_repo)
         contents = repo.get_contents(file_path)
+        print(contents)
         with open(file_path, 'w') as file:
             file.write(contents.decoded_content.decode())
             print(f"Downloaded preferences from GitHub to {file_path}")
