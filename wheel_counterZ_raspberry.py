@@ -68,10 +68,14 @@ hall_effect_sensor_4_count = initialize_hall_sensor_counter("hall_effect_sensor_
 hall_sensor_pins = [5, 6, 13, 19]
 
 # Set up GPIO pins using a for loop
-hall_sensor_1_pin = GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-hall_sensor_2_pin = GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-hall_sensor_3_pin = GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-hall_sensor_4_pin = GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+hall_sensor_1_pin=GPIO.input(5)
+GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+hall_sensor_2_pin=GPIO.input(6)
+GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+hall_sensor_3_pin=GPIO.input(13)
+GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+hall_sensor_4_pin=GPIO.input(19)
 
 def write_to_file(filename, message):
     with open(f"/place1/{filename}", "a") as f:
