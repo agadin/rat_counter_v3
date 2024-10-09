@@ -1,0 +1,8 @@
+streamlit
+PyGithub
+pandas
+matplotlib
+plotly
+streamlit-option-menu
+streamlit-elements
+pytz
