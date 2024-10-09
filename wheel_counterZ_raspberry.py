@@ -132,9 +132,18 @@ gpio_to_sensor_number = {
     19: 4
 }
 
+import time
+
+# Initialize a dictionary to store the last timestamp for each sensor
+last_timestamp = {pin: 0 for pin in hall_sensor_pins}
+
 def sensor_callback(gpio, level, tick):
     try:
+        current_time = time.time()
         if level == pigpio.LOW:  # Sensor detected
+            if current_time - last_timestamp[gpio] < 0.25:  # Less than 25 ms
+                return  # Do not increase the count or log to the files
+            last_timestamp[gpio] = current_time  # Update the last timestamp
             timestamp = time.time()
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
