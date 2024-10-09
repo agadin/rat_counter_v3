@@ -12,6 +12,9 @@ sudo systemctl status myscript.service
 
 sudo journalctl -u myscript.service -f
 
+pip3 install adafruit-circuitpython-neopixel
+sudo python3 -m pip install --force-reinstall adafruit-blinka
+
 ```
 
 ```

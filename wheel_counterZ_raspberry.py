@@ -11,6 +11,11 @@ import signal
 import threading
 from datetime import datetime
 
+import neopixel
+
+#Initialise a strips variable, provide the GPIO Data Pin
+#utilised and the amount of LED Nodes on strip and brightness (0 to 1 value)
+pixels1 = neopixel.NeoPixel(board.D18, 1, brightness=1)
 
 # Configure logging
 logging.basicConfig(filename='error.log', level=logging.ERROR,
@@ -166,9 +171,6 @@ def sensor_callback(gpio, level, tick):
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
             sensor_number = gpio_to_sensor_number.get(gpio, "Unknown")
-            print(f"Sensor {sensor_number} detected on GPIO {gpio}")
-            print(f"GPIO: {gpio}, Sensor Number: {sensor_number}")
-            print(f"Sensor Names: {sensor_names}")
             sensor_name = sensor_names.get(f"{sensor_number}", "Unknown Sensor")
             count_var_name = f"hall_effect_sensor_{sensor_number}_count"
             count = globals()[count_var_name] + 1
