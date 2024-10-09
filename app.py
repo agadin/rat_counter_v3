@@ -331,17 +331,6 @@ from datetime import datetime, timedelta
 from streamlit_option_menu import option_menu
 import os
 
-#wide
-st.set_page_config(page_title="Lake Viewer", page_icon="🧊", layout="wide")
-
-#hide top color bar
-hide_decoration_bar_style = '''
-    <style>
-        header {visibility: hidden;}
-    </style>
-'''
-st.markdown(hide_decoration_bar_style, unsafe_allow_html=True)
-
 # Function to read local files
 def get_local_files(file_names):
     files = {}
