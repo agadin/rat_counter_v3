@@ -11,11 +11,13 @@ import signal
 import threading
 from datetime import datetime
 
+import board
+
 import neopixel
 
 #Initialise a strips variable, provide the GPIO Data Pin
 #utilised and the amount of LED Nodes on strip and brightness (0 to 1 value)
-pixels1 = neopixel.NeoPixel(board.D18, 1, brightness=1)
+pixels1 = neopixel.NeoPixel(board.D18, 1, brightness=1.0)
 
 # Configure logging
 logging.basicConfig(filename='error.log', level=logging.ERROR,
