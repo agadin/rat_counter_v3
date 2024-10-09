@@ -205,6 +205,14 @@ sensor_colors = {
     4: (0, 255, 0)     # Green
 }
 
+import threading
+
+def flash_leds(strip, color, flash_time=0.5):
+    """Function to flash LEDs on a separate thread."""
+    set_color(strip, color)  # Turn on all LEDs
+    time.sleep(flash_time)
+    set_color(strip, Color(0, 0, 0))  # Turn off all LEDs
+
 def sensor_callback(gpio, level, tick):
     def debounce():
         try:
@@ -221,9 +229,11 @@ def sensor_callback(gpio, level, tick):
             write_to_file(f"hall_effect_sensor_{sensor_number}.txt", message)
             write_to_file(f"hall_effect_sensor_{sensor_number}_temp.txt", message)
 
-            # Flash the corresponding color on pixels1
+            # Flash the corresponding color on pixels1 in a separate thread
             color = sensor_colors.get(sensor_number, (255, 255, 255))  # Default to white if sensor number is unknown
-            flash_color(strip, *color, flash_time=0.5, flashes=1)
+            print(f"Flashing color: {color}")
+            flash_thread = threading.Thread(target=flash_leds, args=(strip, color))
+            flash_thread.start()
         except Exception as e:
             log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
 
