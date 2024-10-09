@@ -41,26 +41,22 @@ github_repo = secrets['github_repo']
 github_username = secrets['github_username']
 github_token = secrets['github_token']
 
+import json
+
 def read_preferences():
     file_path = 'preferences.json'
     try:
-        # Fetch the preferences.json from GitHub
-        g = github.Github(github_token)
-        repo = g.get_repo(github_repo)
-        contents = repo.get_contents(file_path)
-        print(contents)
-        with open(file_path, 'w') as file:
-            file.write(contents.decoded_content.decode())
-            print(f"Downloaded preferences from GitHub to {file_path}")
-        # Read the preferences.json locally
         with open(file_path, 'r') as file:
             preferences = json.load(file)
             return preferences
     except FileNotFoundError:
         log_error(f"Preferences file {file_path} not found.")
         return {}
+    except json.JSONDecodeError:
+        log_error(f"Error decoding JSON from {file_path}.")
+        return {}
     except Exception as e:
-        log_error(f"Error fetching preferences from GitHub: {e}")
+        log_error(f"Error reading preferences from {file_path}: {e}")
         return {}
 
 preferences = read_preferences()
@@ -75,7 +71,8 @@ sensor_names = preferences.get('sensor_names', {
     "D9": "Sensor 7",
     "D41": "Sensor 8"
 })
-print("Preferencess:", preferences)
+time_between_pushes_minutes = preferences.get('time_between_pushes_minutes', 60)
+print("Preferences:", preferences)
 
 
 
