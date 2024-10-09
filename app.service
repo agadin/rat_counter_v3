@@ -3,7 +3,7 @@ Description=My Python App Service - app.py
 After=network.target
 
 [Service]
-ExecStart=/bin/bash -c 'source /home/lakelab/Documents/rat_counter_v3/myenv/bin/activate && exec python /home/lakelab/Documents/rat_counter_v3/app.py'
+ExecStart=/bin/bash -c 'source /home/lakelab/Documents/rat_counter_v3/myenv/bin/activate && exec streamlit run /home/lakelab/Documents/rat_counter_v3/app.py'
 WorkingDirectory=/home/lakelab/Documents/rat_counter_v3
 StandardOutput=inherit
 StandardError=inherit
