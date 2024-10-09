@@ -10,14 +10,46 @@ import github
 import signal
 import threading
 from datetime import datetime
+from rpi_ws281x import PixelStrip, Color
 
-import board
 
-import neopixel
+# LED strip configuration:
+LED_COUNT = 1        # Number of LED pixels.
+LED_PIN = 18          # GPIO pin connected to the pixels (18 is PWM).
+LED_FREQ_HZ = 800000  # LED signal frequency (800kHz).
+LED_DMA = 10          # DMA channel to use for generating signal.
+LED_BRIGHTNESS = 255  # Brightness of the LEDs (0-255).
+LED_INVERT = False    # True to invert the signal.
+LED_CHANNEL = 0
+
+# Create the PixelStrip object
+strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+strip.begin()
+
+# Function to set the color of a specific pixel
+def set_color(strip, color):
+    """Set all pixels to the provided color."""
+    for i in range(strip.numPixels()):
+        strip.setPixelColor(i, color)
+    strip.show()
+
+# Function to flash the color
+def flash_color(strip, r, g, b, flash_time=0.5, flashes=5):
+    """Flash the provided RGB color on the LED strip."""
+    color = Color(r, g, b)
+    for _ in range(flashes):
+        set_color(strip, color)  # Turn on the color
+        time.sleep(flash_time)
+        set_color(strip, Color(0, 0, 0))  # Turn off (black)
+        time.sleep(flash_time)
+
+
+
+
 
 #Initialise a strips variable, provide the GPIO Data Pin
 #utilised and the amount of LED Nodes on strip and brightness (0 to 1 value)
-pixels1 = neopixel.NeoPixel(board.D18, 1, brightness=1.0)
+
 
 # Configure logging
 logging.basicConfig(filename='error.log', level=logging.ERROR,
@@ -192,9 +224,7 @@ def sensor_callback(gpio, level, tick):
 
             # Flash the corresponding color on pixels1
             color = sensor_colors.get(sensor_number, (255, 255, 255))  # Default to white if sensor number is unknown
-            pixels1.fill(color)
-            time.sleep(0.5)  # Flash duration
-            pixels1.fill((0, 0, 0))  # Turn off the pixel
+            flash_color(strip, *color, flash_time=0.5, flashes=1)
         except Exception as e:
             log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
 
