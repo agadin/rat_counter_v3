@@ -229,16 +229,16 @@ health_check_thread.start()
 
 try:
     while True:
-
         current_time = time.monotonic()
         if current_time - last_push_time >= time_between_pushes_minutes * 60:
             try:
                 last_push_time = current_time
-                for i in range(1, 9):
+                for i in range(1, 5):
                    filename = f"hall_effect_sensor_{i}.txt"
                    #make commit message include count name date/time
                    message = f"Count: {globals()[f'hall_effect_sensor_{i}_count']}, Date: {datetime.now().strftime('%m/%d/%Y')}, Time: {datetime.now().strftime('%H:%M:%S')}"
-                   update_github_file(filename,message )
+                   print(f"Uploading {filename} to GitHub with message: {message}")
+                   update_github_file(filename,message)
                 time.sleep(60)  # Wait a minute to avoid multiple pushes within the same minute
             except Exception as e:
                 log_error(f"Unexpected error uploading to github: {e}")
