@@ -178,7 +178,7 @@ sensor_colors = {
 
 
 
-
+from rpi_lcd import LCD
 lcd = LCD()
 # Function to update the LCD display
 def update_lcd_display():
