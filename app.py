@@ -473,6 +473,23 @@ def main():
 
         st.session_state.files = files
 
+        # Calculate the maximum count for each sensor
+        max_counts = {}
+        for file_name, file_content in files.items():
+            if file_name.startswith("hall_effect_sensor_") and file_name.endswith(".txt"):
+                filtered_data = parse_sensor_data_from_raw(file_content)
+                if filtered_data:
+                    sensor_name = filtered_data[0][2]
+                    max_count = max(count for _, count, _ in filtered_data)
+                    max_counts[sensor_name] = max_count
+
+        # Display the maximum count for each sensor
+        st.header("Current Maximum Counts")
+        cols = st.columns(4)
+        for i, (sensor_name, max_count) in enumerate(max_counts.items()):
+            col = cols[i % 4]
+            col.metric(sensor_name, max_count)
+
         # Rest of the code remains the same, using the `files` dictionary
         # ...
         
@@ -669,40 +686,42 @@ def main():
         
        #third section
         with graph_2:
-            graph_2_setting = st.selectbox("Select Time Frame", ['7am to 7am'], help='Select the time frame to be displayed in the figure')
+            graph_2_setting = st.selectbox("Select Time Frame", ['7am to 7am'],
+                                           help='Select the time frame to be displayed in the figure')
             # Initialize DataFrame for display
             ranges_df = pd.DataFrame()
-            
-            # Process each file for 7am to 7am periods
-            for file_name, file_content in files.items():
-                if file_name.startswith("hall_effect_sensor_") and file_name.endswith(".txt"):
-                    filtered_data = parse_sensor_data_from_raw(file_content)
-                    if filtered_data:
-                        ranges_data = calculate_7am_to_7am_ranges(filtered_data)
-                        ranges_df = pd.concat([ranges_df, ranges_data], axis=1)
-            
-            # Display the ranges DataFrame using Plotly bar charts
-            
-            # Create a figure for Plotly bar chart
-            fig = go.Figure()
-            
-            # Add bar traces for each sensor
-            for sensor_name in ranges_df.columns:
-                fig.add_trace(go.Bar(x=ranges_df.index, y=ranges_df[sensor_name], name=sensor_name))
-            
-            # Customize layout
-            fig.update_layout(
-                barmode='group',
-                xaxis_tickangle=-45,
-                xaxis=dict(title='7am to 7am Period'),
-                yaxis=dict(title='Range of Counts'),
-                legend=dict(title='Sensor'),
-                title='Ranges of Counts per 7am to 7am Periods'
-            )
-            
-            # Display the Plotly figure using st.plotly_chart
-            st.plotly_chart(fig)
-                        
+
+            try:
+                # Process each file for 7am to 7am periods
+                for file_name, file_content in files.items():
+                    if file_name.startswith("hall_effect_sensor_") and file_name.endswith(".txt"):
+                        filtered_data = parse_sensor_data_from_raw(file_content)
+                        if filtered_data:
+                            ranges_data = calculate_7am_to_7am_ranges(filtered_data)
+                            ranges_df = pd.concat([ranges_df, ranges_data], axis=1)
+
+                # Display the ranges DataFrame using Plotly bar charts
+
+                # Create a figure for Plotly bar chart
+                fig = go.Figure()
+
+                # Add bar traces for each sensor
+                for sensor_name in ranges_df.columns:
+                    fig.add_trace(go.Bar(x=ranges_df.index, y=ranges_df[sensor_name], name=sensor_name))
+
+                # Customize layout
+                fig.update_layout(
+                    barmode='group',
+                    xaxis_tickangle=-45,
+                    xaxis=dict(title='7am to 7am Period'),
+                    yaxis=dict(title='Count')
+                )
+
+                # Render Plotly chart
+                st.plotly_chart(fig)
+            except Exception as e:
+                st.warning("There is not a complete 7am to 7am period.")
+                print(f"Error processing 7am to 7am period: {e}")
                 
             with st.expander("Raw 7am to 7am data"):
                 
