@@ -166,11 +166,12 @@ def sensor_callback(gpio, level, tick):
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
             sensor_number = gpio_to_sensor_number.get(gpio, "Unknown")
+            print(f"Sensor {sensor_number} detected on GPIO {gpio}")
             sensor_name = sensor_names.get(f"{sensor_number}", "Unknown Sensor")
             count_var_name = f"hall_effect_sensor_{sensor_number}_count"
             count = globals()[count_var_name] + 1
             globals()[count_var_name] = count
-            message = f"Date: {date_str} Time: {time_str}, Count: {count}, Pin: D{gpio}, Sensor Name: {sensor_name}"
+            message = f"Date: {date_str} Time: {time_str}, Count: {count}, Pin: {gpio}, Sensor Name: {sensor_name}"
             print(message)
             write_to_file(f"hall_effect_sensor_{sensor_number}.txt", message)
             write_to_file(f"hall_effect_sensor_{sensor_number}_temp.txt", message)
