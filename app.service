@@ -3,8 +3,8 @@ Description=My Python App Service - app.py
 After=network.target
 
 [Service]
-ExecStart=/bin/bash -c 'source /Documents/rat_counter_v3/myenv/bin/activate && exec python /Documents/rat_counter_v3/app.py'
-WorkingDirectory=/Documents/rat_counter_v3
+ExecStart=/bin/bash -c 'source ~/Documents/rat_counter_v3/myenv/bin/activate && exec python ~/Documents/rat_counter_v3/app.py'
+WorkingDirectory=~/Documents/rat_counter_v3
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
