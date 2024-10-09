@@ -212,7 +212,7 @@ try:
         if current_time - last_push_time >= time_between_pushes_minutes * 60:
             last_push_time = current_time
             for i in range(1, 9):
-                filename = f"hall_effect_sensor_{i}.txt"
+                filename = f"/place1/hall_effect_sensor_{i}.txt"
                 update_github_file(filename)
             time.sleep(60)  # Wait a minute to avoid multiple pushes within the same minute
         time.sleep(1)  # Keep the program running
