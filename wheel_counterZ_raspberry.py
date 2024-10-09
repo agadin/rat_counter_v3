@@ -44,7 +44,7 @@ def read_preferences():
         contents = repo.get_contents(file_path)
         with open(file_path, 'w') as file:
             file.write(contents.decoded_content.decode())
-
+            print(f"Downloaded preferences from GitHub to {file_path}")
         # Read the preferences.json locally
         with open(file_path, 'r') as file:
             preferences = json.load(file)
@@ -68,7 +68,7 @@ sensor_names = preferences.get('sensor_names', {
     "D9": "Sensor 7",
     "D41": "Sensor 8"
 })
-print("Sensor names:", sensor_names)
+print("Preferencess:", preferences)
 
 from secrets import secrets
 github_repo = secrets['github_repo']
