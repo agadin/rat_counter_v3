@@ -1,7 +1,12 @@
-import RPi.GPIO as GPIO
-import time
 import sys
 import os
+
+# Add the virtual environment's site-packages to the PYTHONPATH
+venv_path = "/path/to/your/venv/lib/python3.x/site-packages"
+sys.path.append(venv_path)
+
+import RPi.GPIO as GPIO
+import time
 import datetime
 import csv
 import json
@@ -91,7 +96,13 @@ def main():
 
 print("Setup GPIO pin as input on GPIO5")
 GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(5, GPIO.BOTH, callback=sensorCallback, bouncetime=200)
+
+try:
+    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensorCallback, bouncetime=200)
+except RuntimeError as e:
+    print(f"Failed to add edge detection: {e}")
+    GPIO.cleanup()
+    sys.exit(1)
 
 if __name__ == "__main__":
     main()
