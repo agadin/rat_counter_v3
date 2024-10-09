@@ -10,37 +10,6 @@ import github
 import signal
 import threading
 from datetime import datetime
-from rpi_ws281x import PixelStrip, Color
-
-
-# LED strip configuration:
-LED_COUNT = 1         # Number of LED pixels.
-LED_PIN = 10           # SPI pin connected to the pixels (GPIO 10 is MOSI for SPI).
-LED_FREQ_HZ = 800000   # LED signal frequency (800kHz).
-LED_DMA = 10           # DMA channel to use for generating signal (set to default).
-LED_BRIGHTNESS = 255   # Brightness of the LEDs (0-255).
-LED_CHANNEL = 0
-
-# Create the PixelStrip object using SPI
-strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, False, LED_BRIGHTNESS, LED_CHANNEL, strip_type=1)
-strip.begin()
-
-# Function to set the color of a specific pixel
-def set_color(strip, color):
-    """Set all pixels to the provided color."""
-    for i in range(strip.numPixels()):
-        strip.setPixelColor(i, color)
-    strip.show()
-
-# Function to flash the color
-def flash_color(strip, r, g, b, flash_time=0.5, flashes=5):
-    """Flash the provided RGB color on the LED strip."""
-    color = Color(r, g, b)
-    for _ in range(flashes):
-        set_color(strip, color)  # Turn on the color
-        time.sleep(flash_time)
-        set_color(strip, Color(0, 0, 0))  # Turn off (black)
-        time.sleep(flash_time)
 
 
 
@@ -207,12 +176,45 @@ sensor_colors = {
 
 import threading
 
-def flash_leds(strip, color, flash_time=0.5):
-    """Function to flash LEDs on a separate thread."""
-    set_color(strip, color)  # Turn on all LEDs
-    time.sleep(flash_time)
-    set_color(strip, Color(0, 0, 0))  # Turn off all LEDs
 
+import board
+import busio
+import adafruit_character_lcd.character_lcd_i2c as character_lcd
+
+# LCD configuration
+lcd_columns = 16
+lcd_rows = 2
+
+# Initialize I2C bus
+i2c = busio.I2C(board.SCL, board.SDA)
+
+# Initialize the LCD class
+lcd = character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows)
+
+# Function to update the LCD display
+def update_lcd_display():
+    try:
+        # Read the current counts
+        count1 = globals().get('hall_effect_sensor_1_count', 0)
+        count2 = globals().get('hall_effect_sensor_2_count', 0)
+        count3 = globals().get('hall_effect_sensor_3_count', 0)
+        count4 = globals().get('hall_effect_sensor_4_count', 0)
+
+        # Create the display message
+        line1 = f"1:{count1} 2:{count2}"
+        line2 = f"3:{count3} 4:{count4}"
+
+        # Ensure the lines are within the 16 character limit
+        line1 = line1[:lcd_columns]
+        line2 = line2[:lcd_columns]
+
+        # Update the LCD display
+        lcd.clear()
+        lcd.message = f"{line1}\n{line2}"
+    except Exception as e:
+        log_error(f"Error updating LCD display: {e}")
+
+# Call the update_lcd_display function whenever counts change
 def sensor_callback(gpio, level, tick):
     def debounce():
         try:
@@ -234,6 +236,9 @@ def sensor_callback(gpio, level, tick):
             print(f"Flashing color: {color}")
             flash_thread = threading.Thread(target=flash_leds, args=(strip, color))
             flash_thread.start()
+
+            # Update the LCD display
+            update_lcd_display()
         except Exception as e:
             log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
 

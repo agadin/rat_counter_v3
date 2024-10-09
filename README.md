@@ -15,6 +15,8 @@ sudo journalctl -u myscript.service -f
 pip3 install adafruit-circuitpython-neopixel
 sudo python3 -m pip install --force-reinstall adafruit-blinka
 
+pip3 install adafruit-circuitpython-charlcd
+sudo apt-get install python3-pip python3-dev i2c-tools
 ```
 
 ```
