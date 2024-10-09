@@ -148,6 +148,7 @@ def update_preferences():
         else:
             print(f"Failed to fetch preferences.json: {response.status_code}")
     except Exception as e:
+        log_error(str(e))
         print(f"Error updating preferences: {e}")
 
     try:
@@ -181,6 +182,7 @@ def update_preferences():
             lcd = LCD(I2CPCF8574Interface(i2c, address), num_rows=2, num_cols=16)
             print("debug: lcd initialised")
         except Exception as e:
+            log_error(str(e))
             print("Error initializing LCD:", e)
 
 update_preferences()# Load preferences from SD card if available
@@ -228,6 +230,7 @@ def push_to_github(filename):
             print("Error getting file info:", response.status_code, response.text)
             raise SystemExit
     except Exception as e:
+        log_error(str(e))
         print("Error retrieving file SHA:", e)
         raise SystemExit
 
@@ -247,6 +250,7 @@ def push_to_github(filename):
         print("Response:", response.status_code)
         print("Response Content:", response.text)
     except Exception as e:
+        log_error(str(e))
         print("Error uploading file to GitHub:", e)
 def flash_led(color):
     # Flash the NeoPixel LED
@@ -299,6 +303,10 @@ def initialize_hall_sensor_counter(filename):
     except FileNotFoundError:
         return 0
 
+def log_error(message):
+    with open("/sd/log.txt", "a") as log_file:
+        log_file.write(f"{get_rtc_time()} - ERROR: {message}\n")
+
 
 last_push_time = time.monotonic()
 
@@ -342,7 +350,7 @@ hall_7 = True
 hall_8 = True
 while True:
     try:
-        if not hall_sensor_1_pin.value:
+        if not hall_sensor_1_pin.value and hall_1:
             hall_sensor_1_counter += 1
             sensor_name = sensor_names.get("D3", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_1_counter}, Pin: D3, Sensor Name: {sensor_name}"
@@ -352,7 +360,7 @@ while True:
             print(message)  # Debug print
             hall_1 = False
 
-        if not hall_sensor_2_pin.value:
+        if not hall_sensor_2_pin.value and hall_2:
             hall_sensor_2_counter += 1
             sensor_name = sensor_names.get("D4", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_2_counter}, Pin: D4, Sensor Name: {sensor_name}"
@@ -362,7 +370,7 @@ while True:
             print(message)  # Debug print
             hall_2 = False
 
-        if not hall_sensor_3_pin.value:
+        if not hall_sensor_3_pin.value and hall_3:
             hall_sensor_3_counter += 1
             sensor_name = sensor_names.get("D5", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_3_counter}, Pin: D5, Sensor Name: {sensor_name}"
@@ -372,7 +380,7 @@ while True:
             print(message)  # Debug print
             hall_3 = False
 
-        if not hall_sensor_4_pin.value:
+        if not hall_sensor_4_pin.value and hall_4:
             hall_sensor_4_counter += 1
             sensor_name = sensor_names.get("D6", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_4_counter}, Pin: D6, Sensor Name: {sensor_name}"
@@ -382,7 +390,7 @@ while True:
             print(message)  # Debug print
             hall_4 = False
 
-        if not hall_sensor_5_pin.value:
+        if not hall_sensor_5_pin.value and hall_5:
             hall_sensor_5_counter += 1
             sensor_name = sensor_names.get("D7", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_5_counter}, Pin: D7, Sensor Name: {sensor_name}"
@@ -392,7 +400,7 @@ while True:
             print(message)  # Debug print
             hall_5 = False
 
-        if not hall_sensor_6_pin.value:
+        if not hall_sensor_6_pin.value and hall_6:
             hall_sensor_6_counter += 1
             sensor_name = sensor_names.get("D8", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_6_counter}, Pin: D8, Sensor Name: {sensor_name}"
@@ -402,7 +410,7 @@ while True:
             print(message)  # Debug print
             hall_6= False
 
-        if not hall_sensor_7_pin.value:
+        if not hall_sensor_7_pin.value and hall_7:
             hall_sensor_7_counter += 1
             sensor_name = sensor_names.get("D9", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_7_counter}, Pin: D9, Sensor Name: {sensor_name}"
@@ -412,7 +420,7 @@ while True:
             print(message)  # Debug print
             hall_7= False
 
-        if not hall_sensor_8_pin.value:
+        if not hall_sensor_8_pin.value and hall_8:
             hall_sensor_8_counter += 1
             sensor_name = sensor_names.get("D41", "Unknown Sensor")
             message = f"{get_rtc_time()}, Count: {hall_sensor_8_counter}, Pin: D41, Sensor Name: {sensor_name}"
@@ -463,21 +471,6 @@ while True:
 
         # Check if it's time to push the files to GitHub
         current_time = time.monotonic()
-        if current_time - last_push_time >= time_between_pushes_minutes * 60:
-            for i in range(1, 9):
-                filename = f"hall_effect_sensor_{i}_temp.txt"
-                push_to_github(filename)
-                try:
-                    with open(f"/sd/{filename}", "w") as f:
-                        pass  # Opening the file in 'w' mode clears its contents
-                    print(f"{filename} has been cleared.")
-                except Exception as e:
-                    print(f"Error clearing {filename}: {e}")
-            update_preferences()
-            last_push_time = current_time
-        cycle_counter += 1
-
-        #pin off
         if hall_sensor_1_pin.value:
             hall_1 = True
         if hall_sensor_2_pin.value:
@@ -494,8 +487,26 @@ while True:
             hall_7 = True
         if hall_sensor_8_pin.value:
             hall_8 = True
+        if current_time - last_push_time >= time_between_pushes_minutes * 60:
+            last_push_time = current_time
+            for i in range(1, 9):
+                filename = f"hall_effect_sensor_{i}_temp.txt"
+                push_to_github(filename)
+                try:
+                    with open(f"/sd/{filename}", "w") as f:
+                        pass  # Opening the file in 'w' mode clears its contents
+                    print(f"{filename} has been cleared.")
+                except Exception as e:
+                    log_error(str(e))
+                    print(f"Error clearing {filename}: {e}")
+            update_preferences()
+        cycle_counter += 1
+
+        #pin off
+
 
     except Exception as e:
+        log_error(str(e))
         print("An error occurred: ", e)
 
     time.sleep(0.05)  # Check sensors every second
