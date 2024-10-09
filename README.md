@@ -19,6 +19,23 @@ pip3 install adafruit-circuitpython-charlcd
 sudo apt-get install python3-pip python3-dev i2c-tools
 ```
 
+# automatic starting
+```
+sudo systemctl daemon-reload
+sudo systemctl enable myscript.service
+sudo systemctl enable app.service
+sudo systemctl start myscript.service
+sudo systemctl start app.service
+sudo systemctl status myscript.service
+sudo systemctl status app.service
+
+sudo systemctl start pigpiod
+sudo systemctl enable pigpiod
+sudo systemctl status pigpiod
+
+
+
+```
 ```
 {
     "time_between_pushes_minutes": 60,

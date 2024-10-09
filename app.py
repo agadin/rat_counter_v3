@@ -322,6 +322,13 @@ def files_to_bytesio(files):
                 z.writestr(file_name, content.encode('utf-8'))  # Encode as bytes if content is a string
     return zip_data.getvalue()
 
+def read_log_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return file.read()
+    except Exception as e:
+        return f"Error reading {file_path}: {e}"
+
 import streamlit as st
 import json
 import pandas as pd
@@ -463,6 +470,7 @@ def main():
             st.write("Settings restored.")
 
     elif selected2 == "Home":
+
         # Ensure files have been retrieved or uploaded
         file_names = [f"hall_effect_sensor_{i}.txt" for i in range(1, 9)]
         files = get_local_files(file_names)
@@ -769,7 +777,14 @@ def main():
                     st.error('GitHub repository name or access key is not defined. Please apply settings first.')
             
         
-        
+        with st.expander("View error.log"):
+            error_log_content = read_log_file('error.log')
+            st.text(error_log_content)
+
+        # Add expander for health_check.log
+        with st.expander("View health_check.log"):
+            health_check_log_content = read_log_file('health_check.log')
+            st.text(health_check_log_content)
         with col2:
             st.download_button(label="Download .txt Files", data=files_to_bytesio(files), file_name="sensor_data.zip")
 
@@ -780,7 +795,7 @@ def main():
         # Display last refreshed timestamp
         if 'timestamp_last_refresh' in st.session_state:
             st.write(f"Last Page Refresh: {st.session_state.timestamp_last_refresh}")
-    elif selected2 == "Wiki":
+    elif "Wiki" == selected2:
         st.header("README")
 
         github_access_key_s = st.session_state.get('github_access_key')
