@@ -94,7 +94,7 @@ def parse_sensor_data_from_raw(content):
         sensor_name_part = line.split("Sensor Name: ")[1].strip()
 
         # Convert date and time to the desired format
-        timestamp = datetime.datetime.strptime(f"{date_part} {time_part}", "%m/%d/%Y %H:%M:%S")
+        timestamp = datetime.strptime(f"{date_part} {time_part}", "%m/%d/%Y %H:%M:%S")
         formatted_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
         # Store the parsed information
@@ -110,13 +110,13 @@ def clip_to_last_24_hours(filtered_data):
         return []
 
     # Find the most recent timestamp
-    most_recent_time = datetime.datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
+    most_recent_time = datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
 
     # Calculate the cutoff time (24 hours before the most recent time)
     cutoff_time = most_recent_time - datetime.timedelta(hours=24)
 
     # Filter data to include only entries within the last 24 hours
-    clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if datetime.datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") >= cutoff_time]
+    clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") >= cutoff_time]
 
     return clipped_data
 
@@ -147,11 +147,11 @@ def clip_to_previous_24_hours(filtered_data):
     most_recent_time = filtered_data[-1][0]
     
     # Calculate the cutoff times
-    end_time = datetime.datetime.strptime(most_recent_time, "%Y-%m-%d %H:%M:%S") - datetime.timedelta(hours=24)
+    end_time = datetime.strptime(most_recent_time, "%Y-%m-%d %H:%M:%S") - datetime.timedelta(hours=24)
     start_time = end_time - datetime.timedelta(hours=24)
     
     # Filter data to include only entries within the 24-hour period before the last 24 hours
-    clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if start_time <= datetime.datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < end_time]
+    clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if start_time <= datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < end_time]
     return clipped_data
 
 # Function to clip data to the most recent 7am to 7am period
@@ -162,7 +162,7 @@ def clip_to_7am_period(filtered_data):
         return []
 
     # Find the most recent timestamp and convert it to a datetime object
-    most_recent_time = datetime.datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
+    most_recent_time = datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
 
     # Find the most recent 7am before the most recent timestamp
     most_recent_7am = most_recent_time.replace(hour=7, minute=0, second=0, microsecond=0)
@@ -177,7 +177,7 @@ def clip_to_7am_period(filtered_data):
     clipped_data = [
         (ts, count, sensor_name)
         for (ts, count, sensor_name) in filtered_data
-        if cutoff_time_start <= datetime.datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < cutoff_time_end
+        if cutoff_time_start <= datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < cutoff_time_end
     ]
     return clipped_data, cutoff_time_start, cutoff_time_end
 
@@ -189,7 +189,7 @@ def clip_to_previous_7am_period(filtered_data):
         return []
 
     # Find the most recent timestamp and convert it to a datetime object
-    most_recent_time = datetime.datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
+    most_recent_time = datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
 
     # Find the most recent 7am before the most recent timestamp
     most_recent_7am = most_recent_time.replace(hour=7, minute=0, second=0, microsecond=0)
@@ -204,7 +204,7 @@ def clip_to_previous_7am_period(filtered_data):
     clipped_data = [
         (ts, count, sensor_name)
         for (ts, count, sensor_name) in filtered_data
-        if cutoff_time_start <= datetime.datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < cutoff_time_end
+        if cutoff_time_start <= datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < cutoff_time_end
     ]
 
     return clipped_data, cutoff_time_start, cutoff_time_end
@@ -219,8 +219,8 @@ def calculate_counts_per_7am_period(filtered_data):
     start_time = datetime.time(7, 0, 0)
     end_time = datetime.time(7, 0, 0)
 
-    current_period_start = datetime.datetime.combine(current_date, start_time)
-    current_period_end = datetime.datetime.combine(current_date, end_time)
+    current_period_start = datetime.combine(current_date, start_time)
+    current_period_end = datetime.combine(current_date, end_time)
 
     total_count = 0
     for timestamp, count, sensor_name in filtered_data:
@@ -230,8 +230,8 @@ def calculate_counts_per_7am_period(filtered_data):
             counts_per_period[current_period_start.strftime('%Y-%m-%d %H:%M:%S')] = total_count
             # Move to the next 7am to 7am period
             current_date = timestamp.date()
-            current_period_start = datetime.datetime.combine(current_date, start_time)
-            current_period_end = datetime.datetime.combine(current_date + datetime.timedelta(days=1), end_time)
+            current_period_start = datetime.combine(current_date, start_time)
+            current_period_end = datetime.combine(current_date + datetime.timedelta(days=1), end_time)
             total_count = count
     
     # Add the last period
@@ -273,7 +273,7 @@ import pytz
 
 # Function to record timestamp in local time
 def record_timestamp():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # Function to retrieve the last commit date for a file and convert it to Central Time
 def get_last_commit_date(repo_name, access_key, file_name):
@@ -504,8 +504,8 @@ def main():
                             total_counts_24[f'total_counts_24_hall_{i}'] = max(counts_24)
 
                             # Convert the first timestamp to a datetime object before calling strftime
-                            start_time_24 = datetime.datetime.strptime(timestamps_24[0], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-                            end_time_24 = datetime.datetime.strptime(timestamps_24[-1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+                            start_time_24 = datetime.strptime(timestamps_24[0], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+                            end_time_24 = datetime.strptime(timestamps_24[-1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
                             sensor_names_24_out[f'hall_effect_sensor_{i}.txt'] = sensor_names_24[-1]
                         # Clip data to the previous 24 hours
                         filtered_data_prev_24 = clip_to_previous_24_hours(filtered_data)
