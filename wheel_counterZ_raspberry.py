@@ -138,7 +138,12 @@ def update_github_file(filename):
         # Get the file contents from the repository
         contents = repo.get_contents(filename)
         # Update the file on GitHub
-        repo.update_file(contents.path, f"Updated {filename}", file_content, contents.sha)
+        #make the message count the coubnt time and name
+        message = f"Count: {globals()[f'hall_effect_sensor_{i}_count']}, Date: {datetime.now().strftime('%m/%d/%Y')}, Time: {datetime.now().strftime('%H:%M:%S')}"
+
+        #upload the txt file to github
+        repo.update_file(contents.path, message, file_content, contents.sha, branch="main")
+
         print(f"Updated GitHub file {filename}")
     except Exception as e:
         log_error(f"Error updating GitHub file {filename}: {e}")
