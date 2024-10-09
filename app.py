@@ -113,7 +113,7 @@ def clip_to_last_24_hours(filtered_data):
     most_recent_time = datetime.strptime(filtered_data[-1][0], "%Y-%m-%d %H:%M:%S")
 
     # Calculate the cutoff time (24 hours before the most recent time)
-    cutoff_time = most_recent_time - datetime.timedelta(hours=24)
+    cutoff_time = most_recent_time - timedelta(hours=24)
 
     # Filter data to include only entries within the last 24 hours
     clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") >= cutoff_time]
@@ -131,7 +131,7 @@ def clip_to_last_1_hour(filtered_data):
     most_recent_time = filtered_data[-1][0]
     
     # Calculate the cutoff time (1 hour before the most recent time)
-    cutoff_time = most_recent_time - datetime.timedelta(hours=1)
+    cutoff_time = most_recent_time - timedelta(hours=1)
     
     # Filter data to include only entries within the last 1 hour
     clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") >= cutoff_time]
@@ -147,8 +147,8 @@ def clip_to_previous_24_hours(filtered_data):
     most_recent_time = filtered_data[-1][0]
     
     # Calculate the cutoff times
-    end_time = datetime.strptime(most_recent_time, "%Y-%m-%d %H:%M:%S") - datetime.timedelta(hours=24)
-    start_time = end_time - datetime.timedelta(hours=24)
+    end_time = datetime.strptime(most_recent_time, "%Y-%m-%d %H:%M:%S") - timedelta(hours=24)
+    start_time = end_time - timedelta(hours=24)
     
     # Filter data to include only entries within the 24-hour period before the last 24 hours
     clipped_data = [(ts, count, sensor_name) for (ts, count, sensor_name) in filtered_data if start_time <= datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") < end_time]
@@ -167,10 +167,10 @@ def clip_to_7am_period(filtered_data):
     # Find the most recent 7am before the most recent timestamp
     most_recent_7am = most_recent_time.replace(hour=7, minute=0, second=0, microsecond=0)
     if most_recent_time.hour < 7:
-        most_recent_7am -= datetime.timedelta(days=1)
+        most_recent_7am -= timedelta(days=1)
 
     # Calculate the cutoff times for the last 7am to 7am period
-    cutoff_time_start = most_recent_7am - datetime.timedelta(days=1)
+    cutoff_time_start = most_recent_7am - timedelta(days=1)
     cutoff_time_end = most_recent_7am
 
     # Filter data to include only entries within the last 7am to 7am period
@@ -194,11 +194,11 @@ def clip_to_previous_7am_period(filtered_data):
     # Find the most recent 7am before the most recent timestamp
     most_recent_7am = most_recent_time.replace(hour=7, minute=0, second=0, microsecond=0)
     if most_recent_time.hour < 7:
-        most_recent_7am -= datetime.timedelta(days=1)
+        most_recent_7am -= timedelta(days=1)
 
     # Calculate the cutoff times for the previous 7am to 7am period
-    cutoff_time_start = most_recent_7am - datetime.timedelta(days=2)
-    cutoff_time_end = most_recent_7am - datetime.timedelta(days=1)
+    cutoff_time_start = most_recent_7am - timedelta(days=2)
+    cutoff_time_end = most_recent_7am - timedelta(days=1)
 
     # Filter data to include only entries within the previous 7am to 7am period
     clipped_data = [
@@ -231,7 +231,7 @@ def calculate_counts_per_7am_period(filtered_data):
             # Move to the next 7am to 7am period
             current_date = timestamp.date()
             current_period_start = datetime.combine(current_date, start_time)
-            current_period_end = datetime.combine(current_date + datetime.timedelta(days=1), end_time)
+            current_period_end = datetime.combine(current_date + timedelta(days=1), end_time)
             total_count = count
     
     # Add the last period
