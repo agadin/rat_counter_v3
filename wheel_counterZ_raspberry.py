@@ -185,14 +185,14 @@ def reload_preferences(signum, frame):
     try:
         preferences = read_preferences()
         sensor_names = preferences.get('sensor_names', {
-            "D3": "Sensor 1",
-            "D4": "Sensor 2",
-            "D5": "Sensor 3",
-            "D6": "Sensor 4",
-            "D7": "Sensor 5",
-            "D8": "Sensor 6",
-            "D9": "Sensor 7",
-            "D41": "Sensor 8"
+            "1": "Sensor A",
+            "2": "Sensor B",
+            "3": "Sensor C",
+            "4": "Sensor D",
+            "5": "Sensor E",
+            "6": "Sensor F",
+            "7": "Sensor G",
+            "8": "Sensor H"
         })
         time_between_pushes_minutes = preferences.get('time_between_pushes_minutes', 10)
         print("Preferences reloaded")
