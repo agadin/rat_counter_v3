@@ -134,6 +134,7 @@ gpio_to_sensor_number = {
 
 def sensor_callback(gpio, level, tick):
     try:
+
         if level == pigpio.LOW:  # Sensor detected
             timestamp = time.time()
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
