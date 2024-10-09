@@ -11,6 +11,7 @@ import github
 from datetime import datetime
 
 
+
 # Set up GPIO
 # Sensors 1-4 will be connected to GIPO 05, 06, 13, 19
 
@@ -26,7 +27,7 @@ sensor_names = {
 }
 
 # import secrets
-import secrets
+from secrets import secrets
 github_repo = secrets['github_repo']
 
 
