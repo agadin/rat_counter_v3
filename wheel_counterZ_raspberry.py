@@ -156,7 +156,7 @@ def sensor_callback(gpio, level, tick):
     if level == pigpio.LOW:  # Sensor detected
         if debounce_timers[gpio] is not None:
             debounce_timers[gpio].cancel()
-        debounce_timers[gpio] = threading.Timer(0.025, debounce)
+        debounce_timers[gpio] = threading.Timer(0.25, debounce)
         debounce_timers[gpio].start()
 
 # Register the callback for rising and falling edges
