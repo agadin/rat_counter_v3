@@ -14,16 +14,15 @@ from rpi_ws281x import PixelStrip, Color
 
 
 # LED strip configuration:
-LED_COUNT = 1        # Number of LED pixels.
-LED_PIN = 18          # GPIO pin connected to the pixels (18 is PWM).
-LED_FREQ_HZ = 800000  # LED signal frequency (800kHz).
-LED_DMA = 10          # DMA channel to use for generating signal.
-LED_BRIGHTNESS = 255  # Brightness of the LEDs (0-255).
-LED_INVERT = False    # True to invert the signal.
+LED_COUNT = 1         # Number of LED pixels.
+LED_PIN = 10           # SPI pin connected to the pixels (GPIO 10 is MOSI for SPI).
+LED_FREQ_HZ = 800000   # LED signal frequency (800kHz).
+LED_DMA = 10           # DMA channel to use for generating signal (set to default).
+LED_BRIGHTNESS = 255   # Brightness of the LEDs (0-255).
 LED_CHANNEL = 0
 
-# Create the PixelStrip object
-strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+# Create the PixelStrip object using SPI
+strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, False, LED_BRIGHTNESS, LED_CHANNEL, strip_type=1)
 strip.begin()
 
 # Function to set the color of a specific pixel
