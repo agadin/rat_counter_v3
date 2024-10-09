@@ -1,11 +1,7 @@
 import sys
 import os
-
-# Add the virtual environment's site-packages to the PYTHONPATH
-venv_path = "/home/lakelab/Documents/rat_counter_v3/myvenv/lib/python3.x/site-packages"
-sys.path.append(venv_path)
-
-import RPi.GPIO as GPIO
+from gpiozero import Button
+from signal import pause
 import time
 import datetime
 import csv
@@ -13,8 +9,12 @@ import json
 import github
 from datetime import datetime
 
+# Add the virtual environment's site-packages to the PYTHONPATH
+venv_path = "/home/lakelab/Documents/rat_counter_v3/myvenv/lib/python3.x/site-packages"
+sys.path.append(venv_path)
+
 # Set up GPIO
-# Sensors 1-4 will be connected to GIPO 05, 06, 13, 19
+# Sensors 1-4 will be connected to GPIO 05, 06, 13, 19
 
 sensor_names = {
     "D3": "Sensor 1",
@@ -34,9 +34,6 @@ github_repo = secrets['github_repo']
 # Replace with your GitHub username and personal access token (PAT)
 github_username = secrets['github_username']
 github_token = secrets['github_token']
-
-# Set up GPIO using BCM numbering
-GPIO.setmode(GPIO.BCM)
 
 # Initialize variables by reading the hall_effect_sensor_i.txt files
 def initialize_hall_sensor_counter(filename):
@@ -63,9 +60,8 @@ hall_effect_sensor_4_count = initialize_hall_sensor_counter("hall_effect_sensor_
 # Define the GPIO pins for the hall sensors
 hall_sensor_pins = [5, 6, 13, 19]
 
-# Set up GPIO pins using a for loop
-for pin in hall_sensor_pins:
-    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# Set up GPIO pins using gpiozero Button
+hall_sensors = [Button(pin) for pin in hall_sensor_pins]
 
 def write_to_file(filename, message):
     with open(f"/place1/{filename}", "a") as f:
@@ -78,31 +74,22 @@ def update_github_file(filename, message):
     contents = repo.get_contents(filename)
     repo.update_file(contents.path, f"Updated {filename}", message, contents.sha)
 
-def sensorCallback(channel):
+def sensor_callback(sensor_index):
     timestamp = time.time()
     stamp = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
-    if GPIO.input(channel):
-        print("Sensor HIGH " + stamp)
-    else:
-        print("Sensor LOW " + stamp)
+    sensor_name = sensor_names.get(f"D{sensor_index+3}", "Unknown Sensor")
+    message = f"{stamp}, Sensor {sensor_index+1} ({sensor_name}) triggered"
+    print(message)
+    write_to_file(f"hall_effect_sensor_{sensor_index+1}.txt", message)
+    write_to_file(f"hall_effect_sensor_{sensor_index+1}_temp.txt", message)
 
 def main():
-    sensorCallback(5)
-    try:
-        while True:
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        GPIO.cleanup()
+    for i, sensor in enumerate(hall_sensors):
+        sensor.when_pressed = lambda i=i: sensor_callback(i)
+        sensor.when_released = lambda i=i: sensor_callback(i)
 
-print("Setup GPIO pin as input on GPIO5")
-GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-try:
-    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensorCallback, bouncetime=200)
-except RuntimeError as e:
-    print(f"Failed to add edge detection: {e}")
-    GPIO.cleanup()
-    sys.exit(1)
+    print("Sensors are set up. Waiting for events...")
+    pause()
 
 if __name__ == "__main__":
     main()
