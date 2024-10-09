@@ -44,19 +44,21 @@ github_token = secrets['github_token']
 import json
 
 def read_preferences():
-    file_path = 'preferences.json'
     try:
-        with open(file_path, 'r') as file:
-            preferences = json.load(file)
-            return preferences
-    except FileNotFoundError:
-        log_error(f"Preferences file {file_path} not found.")
+        # Fetch the preferences.json from GitHub
+        g = github.Github(github_token)
+        repo = g.get_repo(github_repo)
+        contents = repo.get_contents('preferences.json')
+        preferences = json.loads(contents.decoded_content.decode())
+        return preferences
+    except github.GithubException as e:
+        log_error(f"Error fetching preferences from GitHub: {e}")
         return {}
     except json.JSONDecodeError:
-        log_error(f"Error decoding JSON from {file_path}.")
+        log_error("Error decoding JSON from preferences.json.")
         return {}
     except Exception as e:
-        log_error(f"Error reading preferences from {file_path}: {e}")
+        log_error(f"Unexpected error: {e}")
         return {}
 
 preferences = read_preferences()
