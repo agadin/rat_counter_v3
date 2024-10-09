@@ -385,6 +385,10 @@ def parse_sensor_data_from_raw(content):
 
 # Main function for Streamlit app
 def main():
+    # Initialize session state for files if not already initialized
+    if 'files' not in st.session_state:
+        st.session_state.files = {}
+
     selected2 = option_menu(None, ["Settings", "Home", "Wiki"],
                            icons=['gear', 'house', 'wikipedia'],
                            menu_icon="cast", default_index=0, orientation="horizontal")
@@ -467,8 +471,11 @@ def main():
         if not files:
             st.error("No files found. Please ensure the .txt files are available locally.")
             return
-        
-        files = st.session_state.files
+
+        st.session_state.files = files
+
+        # Rest of the code remains the same, using the `files` dictionary
+        # ...
         
         
         # Dropdown for selecting time frame        
