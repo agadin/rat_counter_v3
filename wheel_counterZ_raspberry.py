@@ -34,6 +34,12 @@ print("Current working directory:", os.getcwd())
 # Sensors 1-4 will be connected to GPIO 05, 06, 13, 19
 
 import github
+from secrets import secrets
+github_repo = secrets['github_repo']
+
+# Replace with your GitHub username and personal access token (PAT)
+github_username = secrets['github_username']
+github_token = secrets['github_token']
 
 def read_preferences():
     file_path = 'preferences.json'
@@ -71,12 +77,7 @@ sensor_names = preferences.get('sensor_names', {
 })
 print("Preferencess:", preferences)
 
-from secrets import secrets
-github_repo = secrets['github_repo']
 
-# Replace with your GitHub username and personal access token (PAT)
-github_username = secrets['github_username']
-github_token = secrets['github_token']
 
 # Initialize variables by reading the hall_effect_sensor_i.txt files
 def initialize_hall_sensor_counter(filename):
