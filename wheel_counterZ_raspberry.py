@@ -137,7 +137,6 @@ def update_github_file(filename):
 
         # Get the file contents from the repository
         contents = repo.get_contents(filename)
-
         # Update the file on GitHub
         repo.update_file(contents.path, f"Updated {filename}", file_content, contents.sha)
         print(f"Updated GitHub file {filename}")
