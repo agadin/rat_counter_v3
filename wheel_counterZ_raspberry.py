@@ -231,11 +231,6 @@ def sensor_callback(gpio, level, tick):
             write_to_file(f"hall_effect_sensor_{sensor_number}.txt", message)
             write_to_file(f"hall_effect_sensor_{sensor_number}_temp.txt", message)
 
-            # Flash the corresponding color on pixels1 in a separate thread
-            color = sensor_colors.get(sensor_number, (255, 255, 255))  # Default to white if sensor number is unknown
-            print(f"Flashing color: {color}")
-            flash_thread = threading.Thread(target=flash_leds, args=(strip, color))
-            flash_thread.start()
 
             # Update the LCD display
             update_lcd_display()
