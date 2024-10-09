@@ -132,10 +132,12 @@ gpio_to_sensor_number = {
     19: 4
 }
 
-def sensor_callback(gpio, level, tick):
-    try:
+debounce_timers = {pin: None for pin in hall_sensor_pins}
 
-        if level == pigpio.LOW:  # Sensor detected
+
+def sensor_callback(gpio, level, tick):
+    def debounce():
+        try:
             timestamp = time.time()
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
@@ -148,8 +150,14 @@ def sensor_callback(gpio, level, tick):
             print(message)
             write_to_file(f"hall_effect_sensor_{sensor_number}.txt", message)
             write_to_file(f"hall_effect_sensor_{sensor_number}_temp.txt", message)
-    except Exception as e:
-        log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
+        except Exception as e:
+            log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
+
+    if level == pigpio.LOW:  # Sensor detected
+        if debounce_timers[gpio] is not None:
+            debounce_timers[gpio].cancel()
+        debounce_timers[gpio] = threading.Timer(0.025, debounce)
+        debounce_timers[gpio].start()
 
 # Register the callback for rising and falling edges
 for pin in hall_sensor_pins:
