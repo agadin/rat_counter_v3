@@ -21,6 +21,8 @@ sudo apt-get install python3-pip python3-dev i2c-tools
 
 # automatic starting
 ```
+sudo cp /Documents/rat_counter_v3/myscript.service /etc/systemd/system/
+sudo cp /Documents/rat_counter_v3/app.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable myscript.service
 sudo systemctl enable app.service
