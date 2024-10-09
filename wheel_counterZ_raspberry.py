@@ -33,17 +33,27 @@ print("Current working directory:", os.getcwd())
 # Set up GPIO
 # Sensors 1-4 will be connected to GPIO 05, 06, 13, 19
 
+import github
+
 def read_preferences():
     file_path = 'preferences.json'
     try:
+        # Fetch the preferences.json from GitHub
+        g = github.Github(github_token)
+        repo = g.get_repo(github_repo)
+        contents = repo.get_contents(file_path)
+        with open(file_path, 'w') as file:
+            file.write(contents.decoded_content.decode())
+
+        # Read the preferences.json locally
         with open(file_path, 'r') as file:
             preferences = json.load(file)
             return preferences
     except FileNotFoundError:
         log_error(f"Preferences file {file_path} not found.")
         return {}
-    except json.JSONDecodeError:
-        log_error(f"Error decoding JSON from {file_path}.")
+    except Exception as e:
+        log_error(f"Error fetching preferences from GitHub: {e}")
         return {}
 
 preferences = read_preferences()
@@ -156,7 +166,7 @@ def sensor_callback(gpio, level, tick):
     if level == pigpio.LOW:  # Sensor detected
         if debounce_timers[gpio] is not None:
             debounce_timers[gpio].cancel()
-        debounce_timers[gpio] = threading.Timer(2, debounce)
+        debounce_timers[gpio] = threading.Timer(0.25, debounce)
         debounce_timers[gpio].start()
 
 # Register the callback for rising and falling edges
@@ -168,7 +178,7 @@ print("Sensors are set up. Waiting for events...")
 # Initialize the last push time
 last_push_time = time.monotonic()
 time_between_pushes_minutes = preferences.get('time_between_pushes_minutes', 60)
-
+print(f"time_between_pushes_minutes: {time_between_pushes_minutes}")
 def reload_preferences(signum, frame):
     global preferences, sensor_names, time_between_pushes_minutes
     try:
