@@ -164,6 +164,14 @@ gpio_to_sensor_number = {
 debounce_timers = {pin: None for pin in hall_sensor_pins}
 
 
+# Define the mapping from sensor numbers to colors
+sensor_colors = {
+    1: (255, 0, 0),    # Red
+    2: (255, 165, 0),  # Orange
+    3: (255, 255, 0),  # Yellow
+    4: (0, 255, 0)     # Green
+}
+
 def sensor_callback(gpio, level, tick):
     def debounce():
         try:
@@ -179,6 +187,12 @@ def sensor_callback(gpio, level, tick):
             print(message)
             write_to_file(f"hall_effect_sensor_{sensor_number}.txt", message)
             write_to_file(f"hall_effect_sensor_{sensor_number}_temp.txt", message)
+
+            # Flash the corresponding color on pixels1
+            color = sensor_colors.get(sensor_number, (255, 255, 255))  # Default to white if sensor number is unknown
+            pixels1.fill(color)
+            time.sleep(0.5)  # Flash duration
+            pixels1.fill((0, 0, 0))  # Turn off the pixel
         except Exception as e:
             log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
 
