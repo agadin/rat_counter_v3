@@ -2,7 +2,7 @@ import pigpio
 import time
 
 # GPIO pin number
-HALL_SENSOR_PIN = 17
+HALL_SENSOR_PIN = 5
 
 # Callback function to handle state changes
 def hall_effect_callback(gpio, level, tick):
