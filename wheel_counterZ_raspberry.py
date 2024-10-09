@@ -167,6 +167,8 @@ def sensor_callback(gpio, level, tick):
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
             sensor_number = gpio_to_sensor_number.get(gpio, "Unknown")
             print(f"Sensor {sensor_number} detected on GPIO {gpio}")
+            print(f"GPIO: {gpio}, Sensor Number: {sensor_number}")
+            print(f"Sensor Names: {sensor_names}")
             sensor_name = sensor_names.get(f"{sensor_number}", "Unknown Sensor")
             count_var_name = f"hall_effect_sensor_{sensor_number}_count"
             count = globals()[count_var_name] + 1
