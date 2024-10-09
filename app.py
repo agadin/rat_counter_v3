@@ -4,7 +4,7 @@ from github import Github
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-
+import datetime
 
 #wide
 st.set_page_config(page_title="Local Lake Viewer", page_icon="🧊", layout="wide")
@@ -74,14 +74,11 @@ def get_github_readme(repo_name, access_key):
         return "Error retrieving README."
     
 import plotly.graph_objects as go
-import datetime
+
 
 # Function to parse date and time from your data format
-import datetime
 
-import datetime
 
-import datetime
 
 
 def parse_sensor_data_from_raw(content):
@@ -106,7 +103,7 @@ def parse_sensor_data_from_raw(content):
     return data
 
 
-import datetime
+
 
 def clip_to_last_24_hours(filtered_data):
     if not filtered_data:
@@ -158,7 +155,7 @@ def clip_to_previous_24_hours(filtered_data):
     return clipped_data
 
 # Function to clip data to the most recent 7am to 7am period
-import datetime
+
 
 def clip_to_7am_period(filtered_data):
     if not filtered_data:
@@ -185,7 +182,7 @@ def clip_to_7am_period(filtered_data):
     return clipped_data, cutoff_time_start, cutoff_time_end
 
 # Function to clip data to the 7am to 7am period before the most recent one
-import datetime
+
 
 def clip_to_previous_7am_period(filtered_data):
     if not filtered_data:
