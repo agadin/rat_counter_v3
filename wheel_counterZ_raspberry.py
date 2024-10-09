@@ -64,14 +64,14 @@ def read_preferences():
 preferences = read_preferences()
 
 sensor_names = preferences.get('sensor_names', {
-    "D3": "Sensor 1",
-    "D4": "Sensor 2",
-    "D5": "Sensor 3",
-    "D6": "Sensor 4",
-    "D7": "Sensor 5",
-    "D8": "Sensor 6",
-    "D9": "Sensor 7",
-    "D41": "Sensor 8"
+    "1": "Sensor A",
+    "2": "Sensor B",
+    "3": "Sensor C",
+    "4": "Sensor D",
+    "5": "Sensor E",
+    "6": "Sensor F",
+    "7": "Sensor G",
+    "8": "Sensor H"
 })
 time_between_pushes_minutes = preferences.get('time_between_pushes_minutes', 60)
 print("Preferences:", preferences)
@@ -153,7 +153,7 @@ def sensor_callback(gpio, level, tick):
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
             sensor_number = gpio_to_sensor_number.get(gpio, "Unknown")
-            sensor_name = sensor_names.get(f"D{gpio}", "Unknown Sensor")
+            sensor_name = sensor_names.get(f"{sensor_number}", "Unknown Sensor")
             count_var_name = f"hall_effect_sensor_{sensor_number}_count"
             count = globals()[count_var_name] + 1
             globals()[count_var_name] = count
