@@ -11,6 +11,7 @@ import signal
 import threading
 from datetime import datetime
 
+
 # Configure logging
 logging.basicConfig(filename='error.log', level=logging.ERROR,
                     format='%(asctime)s %(levelname)s:%(message)s')
@@ -18,9 +19,16 @@ logging.basicConfig(filename='error.log', level=logging.ERROR,
 def log_error(message):
     logging.error(message)
 
+import os
+
+# Set the current working directory
+os.chdir('/home/lakelab/Documents/rat_counter_v3')
+
+# Verify the current working directory
+print("Current working directory:", os.getcwd())
+
 # Add the virtual environment's site-packages to the PYTHONPATH
-venv_path = "/home/lakelab/Documents/rat_counter_v3/myvenv/lib/python3.x/site-packages"
-sys.path.append(venv_path)
+
 
 # Set up GPIO
 # Sensors 1-4 will be connected to GPIO 05, 06, 13, 19
