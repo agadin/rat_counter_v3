@@ -251,7 +251,7 @@ try:
                    #make commit message include count name date/time
                    message = f"Count: {globals()[f'hall_effect_sensor_{i}_count']}, Date: {datetime.now().strftime('%m/%d/%Y')}, Time: {datetime.now().strftime('%H:%M:%S')}"
                    print(f"Uploading {filename} to GitHub with message: {message}")
-                   update_github_file(filename,message)
+                   update_github_file(filename)
                 time.sleep(60)  # Wait a minute to avoid multiple pushes within the same minute
             except Exception as e:
                 log_error(f"Unexpected error uploading to github: {e}")
