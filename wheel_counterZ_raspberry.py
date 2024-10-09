@@ -70,7 +70,7 @@ github_token = secrets['github_token']
 # Initialize variables by reading the hall_effect_sensor_i.txt files
 def initialize_hall_sensor_counter(filename):
     try:
-        with open(f"/place1/{filename}", "r") as f:
+        with open(f"{filename}", "r") as f:
             lines = f.readlines()
             max_count = 0
             for line in lines:
@@ -108,7 +108,7 @@ for pin in hall_sensor_pins:
 
 def write_to_file(filename, message):
     try:
-        with open(f"/place1/{filename}", "a") as f:
+        with open(f"{filename}", "a") as f:
             f.write(message + "\n")
     except Exception as e:
         log_error(f"Error writing to {filename}: {e}")
@@ -189,7 +189,7 @@ def health_check():
             "last_push_time": last_push_time,
             "time_between_pushes_minutes": time_between_pushes_minutes
         }
-        with open("/place1/health_check.log", "a") as f:
+        with open("health_check.log", "a") as f:
             f.write(json.dumps(health_status) + "\n")
         print("Health check completed")
     except Exception as e:
@@ -212,7 +212,7 @@ try:
         if current_time - last_push_time >= time_between_pushes_minutes * 60:
             last_push_time = current_time
             for i in range(1, 9):
-                filename = f"/place1/hall_effect_sensor_{i}.txt"
+                filename = f"hall_effect_sensor_{i}.txt"
                 update_github_file(filename)
             time.sleep(60)  # Wait a minute to avoid multiple pushes within the same minute
         time.sleep(1)  # Keep the program running
