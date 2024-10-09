@@ -174,13 +174,12 @@ sensor_colors = {
     4: (0, 255, 0)     # Green
 }
 
-import threading
 
 
 
 
 
-
+lcd = LCD()
 # Function to update the LCD display
 def update_lcd_display():
     try:
