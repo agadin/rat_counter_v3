@@ -50,8 +50,8 @@ sensor_names = preferences.get('sensor_names', {
     "D9": "Sensor 7",
     "D41": "Sensor 8"
 })
+print("Sensor names:", sensor_names)
 
-# import secrets
 from secrets import secrets
 github_repo = secrets['github_repo']
 
@@ -115,20 +115,29 @@ def update_github_file(filename, message):
     except Exception as e:
         log_error(f"Error updating GitHub file {filename}: {e}")
 
+# Define the mapping from GPIO pins to sensor numbers
+gpio_to_sensor_number = {
+    5: 1,
+    6: 2,
+    13: 3,
+    19: 4
+}
+
 def sensor_callback(gpio, level, tick):
     try:
         if level == pigpio.LOW:  # Sensor detected
             timestamp = time.time()
             date_str = datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
             time_str = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
+            sensor_number = gpio_to_sensor_number.get(gpio, "Unknown")
             sensor_name = sensor_names.get(f"D{gpio}", "Unknown Sensor")
-            count_var_name = f"hall_effect_sensor_{gpio}_count"
+            count_var_name = f"hall_effect_sensor_{sensor_number}_count"
             count = globals()[count_var_name] + 1
             globals()[count_var_name] = count
             message = f"Date: {date_str} Time: {time_str}, Count: {count}, Pin: D{gpio}, Sensor Name: {sensor_name}"
             print(message)
-            write_to_file(f"hall_effect_sensor_{gpio}.txt", message)
-            write_to_file(f"hall_effect_sensor_{gpio}_temp.txt", message)
+            write_to_file(f"hall_effect_sensor_{sensor_number}.txt", message)
+            write_to_file(f"hall_effect_sensor_{sensor_number}_temp.txt", message)
     except Exception as e:
         log_error(f"Error in sensor callback for GPIO {gpio}: {e}")
 
