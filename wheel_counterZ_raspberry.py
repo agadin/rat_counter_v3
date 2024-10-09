@@ -89,7 +89,7 @@ def main():
     except KeyboardInterrupt:
         GPIO.cleanup()
 
-print("Setup GPIO pin as input on GPIO17")
+print("Setup GPIO pin as input on GPIO5")
 GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(5, GPIO.BOTH, callback=sensorCallback, bouncetime=200)
 
