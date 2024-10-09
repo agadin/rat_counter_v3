@@ -2,7 +2,7 @@ import sys
 import os
 
 # Add the virtual environment's site-packages to the PYTHONPATH
-venv_path = "/Documents/rat_counter_v3/myvenv/lib/python3.x/site-packages"
+venv_path = "/home/lakelab/Documents/rat_counter_v3/myvenv/lib/python3.x/site-packages"
 sys.path.append(venv_path)
 
 import RPi.GPIO as GPIO
