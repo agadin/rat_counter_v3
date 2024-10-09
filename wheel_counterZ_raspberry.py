@@ -11,7 +11,6 @@ import signal
 import threading
 from datetime import datetime
 
-from code import message
 
 # Configure logging
 logging.basicConfig(filename='error.log', level=logging.ERROR,
