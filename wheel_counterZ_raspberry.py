@@ -177,19 +177,9 @@ sensor_colors = {
 import threading
 
 
-import board
-import busio
-import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
-# LCD configuration
-lcd_columns = 16
-lcd_rows = 2
 
-# Initialize I2C bus
-i2c = busio.I2C(board.SCL, board.SDA)
 
-# Initialize the LCD class
-lcd = character_lcd.Character_LCD_I2C(i2c, lcd_columns, lcd_rows, address=0x27)
 
 # Function to update the LCD display
 def update_lcd_display():
