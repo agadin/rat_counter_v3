@@ -11,6 +11,43 @@ import signal
 import threading
 from datetime import datetime
 
+import socket
+
+def get_ip_address():
+    try:
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        return ip_address
+    except Exception as e:
+        log_error(f"Error getting IP address: {e}")
+        return "Unknown"
+
+def upload_ip_address():
+    try:
+        ip_address = get_ip_address()
+        filename = "device_ip.txt"
+        message = f"IP Address: {ip_address}, Date: {datetime.now().strftime('%m/%d/%Y')}, Time: {datetime.now().strftime('%H:%M:%S')}"
+
+        # Write the IP address to a local file
+        with open(filename, 'w') as file:
+            file.write(message)
+
+        # Initialize GitHub repository
+        g = github.Github(github_token)
+        repo = g.get_repo(github_repo)
+
+        # Get the file contents from the repository
+        try:
+            contents = repo.get_contents(filename)
+            repo.update_file(contents.path, message, message, contents.sha, branch="main")
+        except github.GithubException:
+            repo.create_file(filename, message, message, branch="main")
+
+        print(f"Uploaded IP address to GitHub: {ip_address}")
+    except Exception as e:
+        log_error(f"Error uploading IP address: {e}")
+
+# Call the function to upload the IP address
 
 
 
@@ -292,6 +329,7 @@ try:
         if current_time - last_push_time >= time_between_pushes_minutes * 60:
             try:
                 last_push_time = current_time
+                upload_ip_address()
                 for i in range(1, 5):
                    filename = f"hall_effect_sensor_{i}.txt"
                    #make commit message include count name date/time
