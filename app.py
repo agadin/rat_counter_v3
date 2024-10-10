@@ -374,18 +374,21 @@ def parse_sensor_data_from_raw(content):
     lines = content.strip().split("\n")
 
     for line in lines:
-        # Parse the line
-        date_part = line.split("Date: ")[1].split(" Time:")[0].strip()
-        time_part = line.split("Time: ")[1].split(",")[0].strip()
-        count_part = int(line.split("Count: ")[1].split(",")[0].strip())
-        sensor_name_part = line.split("Sensor Name: ")[1].strip()
+        try:
+            if "Date: " in line and " Time:" in line and "Count: " in line and "Sensor Name: " in line:
+                date_part = line.split("Date: ")[1].split(" Time:")[0].strip()
+                time_part = line.split("Time: ")[1].split(",")[0].strip()
+                count_part = int(line.split("Count: ")[1].split(",")[0].strip())
+                sensor_name_part = line.split("Sensor Name: ")[1].strip()
 
-        # Convert date and time to the desired format
-        timestamp = datetime.strptime(f"{date_part} {time_part}", "%m/%d/%Y %H:%M:%S")
-        formatted_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                # Convert date and time to the desired format
+                timestamp = datetime.strptime(f"{date_part} {time_part}", "%m/%d/%Y %H:%M:%S")
+                formatted_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-        # Store the parsed information
-        data.append((formatted_timestamp, count_part, sensor_name_part))
+                # Store the parsed information
+                data.append((formatted_timestamp, count_part, sensor_name_part))
+        except (IndexError, ValueError) as e:
+            print(f"Error parsing line: {line}. Error: {e}")
 
     return data
 
