@@ -171,7 +171,7 @@ def update_preferences():
             "D9": "Sensor 7",
             "D41": "Sensor 8"
         }
-        lcd_enabled= false
+        lcd_enabled= True
     if lcd_enabled:
         try:
             print("initialising i2c and looking for address")
@@ -491,7 +491,7 @@ while True:
             last_push_time = current_time
             for i in range(1, 9):
                 filename = f"hall_effect_sensor_{i}_temp.txt"
-                push_to_github(filename)
+                # push_to_github(filename)
                 try:
                     with open(f"/sd/{filename}", "w") as f:
                         pass  # Opening the file in 'w' mode clears its contents
@@ -499,7 +499,7 @@ while True:
                 except Exception as e:
                     log_error(str(e))
                     print(f"Error clearing {filename}: {e}")
-            update_preferences()
+            # update_preferences()
         cycle_counter += 1
 
         #pin off
